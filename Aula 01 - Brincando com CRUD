@@ -1,0 +1,43 @@
+CREATE DATABASE if not exists biblioteca;
+USE biblioteca;
+CREATE TABLE if not exists assunto(
+	Id INT AUTO_INCREMENT, 
+	Nome VARCHAR(30) NOT NULL,
+	PRIMARY KEY(Id)
+);
+
+CREATE TABLE if not exists livro(
+	Id INT AUTO_INCREMENT,
+    Titulo VARCHAR(50) NOT NULL,
+    Autor VARCHAR(50) NOT NULL,
+    Assunto_id INT NOT NULL,
+    Lancamento DATE,
+    Copias INT NOT NULL,
+    PRIMARY KEY(Id),
+    FOREIGN KEY(Assunto_id) REFERENCES assunto(Id)
+);
+
+CREATE TABLE if not exists aluno(
+	Id INT AUTO_INCREMENT,
+    Nome VARCHAR(50) NOT NULL,
+    Email VARCHAR(50) NOT NULL,
+    Fone VARCHAR(20) NOT NULL,
+    PRIMARY KEY(Id)
+);
+
+CREATE TABLE if not exists emprestimo(
+	Id INT AUTO_INCREMENT,
+    Aluno_id INT NOT NULL,
+    Livro_id INT NOT NULL,
+    Data_emprestimo DATE,
+    Data_devolucao DATE,
+    Multa DOUBLE(5,2),
+    PRIMARY KEY (Id),
+    FOREIGN KEY(Livro_id) REFERENCES livro(Id),
+    FOREIGN KEY(Aluno_id) REFERENCES aluno(Id)
+);
+
+INSERT INTO aluno(nome, email, fone) VALUES ('DIEGO', 'diego@exemplo.com', '44999013434');
+DELETE FROM ALUNO where nome='Diego';
+
+
