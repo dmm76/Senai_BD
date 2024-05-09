@@ -38,6 +38,7 @@ CREATE TABLE if not exists emprestimo(
 );
 
 INSERT INTO aluno(nome, email, fone) VALUES ('DIEGO', 'diego@exemplo.com', '44999013434');
-DELETE FROM ALUNO where nome='Diego';
 
+DELETE FROM ALUNO;
+SELECT  * FROM aluno;
 
