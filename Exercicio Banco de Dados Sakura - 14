@@ -1,0 +1,69 @@
+USE sakura;
+
+#1.	Listar o primeiro e o último nome dos atores em ordem de último nome, seguido de nome
+SELECT primeiro_nome, ultimo_nome FROM ator
+ORDER BY ultimo_nome ASC;
+
+#2.	Listar apenas o primeiro nome e último nome dos clientes inativos
+SELECT primeiro_nome, ultimo_nome, ativo FROM cliente
+WHERE ativo="0";
+
+#3.	Listar o título dos filmes com duração do filme entre 60 e 80 minutos
+SELECT titulo, duracao_do_filme FROM filme
+WHERE duracao_do_filme BETWEEN 60 AND 80;
+
+#4.	Listar o título dos filmes com preço de locação abaixo de1 dólar, ordenar pelo título.
+SELECT titulo, preco_da_locacao FROM filme
+WHERE preco_da_locacao < 1 ORDER BY titulo;
+
+#5.	Listar título preço da locação e custo de substituição dos filmes com custo e substituição cima de20 dólares, mas que tenham preço de locação abaixo de 3 dólares. Ordene pelo custo de substituição seguido pelo preço de locação.
+SELECT titulo, preco_da_locacao, custo_de_substituicao FROM filme
+WHERE custo_de_substituicao > 20 AND preco_da_locacao > 3
+ORDER BY custo_de_substituicao;
+
+#6.	Qual o filme com custo de substituição mais caro?
+SELECT titulo, custo_de_substituicao FROM filme
+WHERE custo_de_substituicao = (SELECT max(custo_de_substituicao) FROM filme) ;
+
+#7.	Qual a média do preço de locação?
+SELECT AVG(preco_da_locacao) FROM filme;
+
+#8.	Quantos filmes tem duração de 120 minutos ou mais?
+SELECT count(titulo) FROM filme
+WHERE duracao_do_filme >= 120;
+
+#9.	Qual a menor duração de locação?
+SELECT min(duracao_da_locacao) FROM filme;
+
+#10.Liste o título dos filmes com preço da locação acima da média 
+SELECT titulo, preco_da_locacao FROM filme
+WHERE preco_da_locacao > (SELECT AVG(preco_da_locacao) FROM filme)
+ORDER BY preco_da_locacao ASC;
+
+#11.Liste o título dos filmes com maior duração da locação 
+SELECT titulo, duracao_da_locacao FROM filme
+WHERE duracao_da_locacao = (SELECT max(duracao_da_locacao) FROM filme);
+
+#12.Liste o título dos filmes com menor custo de substituição 
+SELECT titulo, custo_de_substituicao FROM filme
+WHERE custo_de_substituicao = (SELECT min(custo_de_substituicao) FROM filme);
+
+#13.Quais cidades do 'Brasil' estão cadastradas no sistema?
+SELECT cidade.cidade, pais.pais FROM cidade
+INNER JOIN pais ON pais.pais_id = cidade.pais_id 
+where pais.pais = "Brazil";
+
+#14.Liste o nome dos clientes, a cidade e o país onde moram
+SELECT cliente.primeiro_nome, cliente.ultimo_nome, cidade.cidade, pais.pais FROM cliente
+INNER JOIN endereco on cliente.endereco_id = endereco.endereco_id
+INNER JOIN cidade on endereco.cidade_id = cidade.cidade_id
+INNER JOIN pais on cidade.pais_id = pais.pais_id;
+
+
+
+
+
+
+
+
+
