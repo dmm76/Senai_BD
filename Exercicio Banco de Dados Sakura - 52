@@ -1,0 +1,353 @@
+USE sakura;
+
+#1. Quais os países cadastrados?
+SELECT pais FROM pais;
+
+#2. Quantos países estão cadastrados?
+SELECT count(pais) FROM pais;
+
+#3. Quantos países que terminam com a letra "A" estão cadastrados?
+SELECT pais FROM pais WHERE pais LIKE "A%";
+
+#4. Listar, sem repetição, os anos que houveram lançamento de filme.
+SELECT DISTINCT ano_de_lancamento FROM filme;
+
+#5. Alterar o ano de lançamento igual 2007 para filmes que iniciem com a Letra "B".
+UPDATE filme
+SET ano_de_lancamento = 2007
+WHERE titulo like "B%"; 
+
+#6. Listar os filmes que possuem duração do filme maior que 100 e classificação igual a "G". 
+SELECT titulo, duracao_do_filme, classificacao FROM filme
+WHERE duracao_do_filme > 100
+AND classificacao = "G" 
+ORDER BY duracao_do_filme ASC; 
+
+#7. Alterar o ano de lançamento igual 2008 para filmes que possuem duração da locação menor que 4 e classificação igual a "PG". 
+UPDATE filme
+SET ano_de_lancamento = 2008
+WHERE duracao_da_locacao < 4
+AND classificacao = "PG";
+
+#8. Listar a quantidade de filmes que estejam classificados como "PG-13" e preço da locação maior que 2.40.
+#SELECT titulo, classificacao, preco_da_locacao FROM filme
+SELECT COUNT(titulo) 
+FROM filme
+WHERE classificacao = "PG-13"
+AND preco_da_locacao > 2.40;
+
+#9. Quais os idiomas que possuem filmes cadastrados? 
+SELECT DISTINCT idioma.nome from filme inner join idioma
+WHERE filme.idioma_id = idioma.idioma_id;
+
+#10. Alterar o idioma para "GERMAN" dos filmes que possuem preço da locação maior que 4.
+UPDATE filme
+SET IDIOMA_ID = (SELECT IDIOMA_ID FROM IDIOMA WHERE NOME = "GERMAN")
+WHERE filme.preco_da_locacao > 4;
+
+#11.Alterar o idioma para "JAPANESE" dos filmes que possuem preço da locação igual 0.99.
+UPDATE filme
+SET idioma_id = (SELECT idioma_id FROM idioma WHERE nome = "JAPANESE")
+WHERE filme.preco_da_locacao = 0.99;
+
+#12. Listar a quantidade de filmes por classificação.
+SELECT COUNT(*), classificacao
+FROM filme
+GROUP BY classificacao; 
+
+#13. Listar, sem repetição, os preços de locação dos filmes cadastrados.
+SELECT DISTINCT preco_da_locacao FROM filme;
+
+#14. Listar a quantidade de filmes por preço da locação.
+SELECT count(titulo), preco_da_locacao
+FROM filme
+GROUP BY preco_da_locacao;
+
+#15. Listar os precos da locação que possuam mais de 340 filmes.
+SELECT preco_da_locacao, COUNT(titulo)
+FROM filme 
+GROUP BY preco_da_locacao
+HAVING COUNT(titulo) > 340; 
+
+#/*16. Listar a quantidade de atores por filme ordenando por quantidade de atores crescente.*/
+SELECT  COUNT(filme_ator.ator_id), filme.titulo
+FROM filme INNER JOIN filme_ator ON filme.filme_id = filme_ator.filme_id
+INNER JOIN ator ON ator.ator_id = filme_ator.ator_id
+GROUP BY titulo
+ORDER BY 1 ASC;
+
+#16.2 Listar a quantidade de atores por filme
+SELECT COUNT(ator_id), filme_id
+FROM filme_ator
+GROUP BY filme_id;
+
+#17. Listar a quantidade de atores para os filmes que possuem mais de 5 atores
+#ordenando por quantidade de atores decrescente.
+SELECT COUNT(ator.ator_id), filme.titulo
+FROM filme INNER JOIN filme_ator ON filme.filme_id = filme_ator.filme_id 
+INNER JOIN ator ON ator.ator_id = filme_ator.ator_id
+GROUP BY titulo
+HAVING COUNT(ator.ator_id) > 5
+ORDER BY 1 DESC;
+
+#18. Listar o título e a quantidade de atores para os filmes que possuem o idioma "ENGLISH"
+# e mais de 10 atores ordenando por ordem alfabética de título e ordem crescente de quantidade de atores.
+SELECT filme.titulo, COUNT(ator.ator_id) as Quant_Atores from filme
+INNER JOIN filme_ator ON filme.filme_id = filme_ator.filme_id
+INNER JOIN ator ON ator.ator_id = filme_ator.ator_id
+INNER JOIN idioma ON idioma.idioma_id = filme.idioma_id
+AND idioma.nome = "ENGLISH"
+GROUP BY titulo
+HAVING COUNT(ator.ator_id) > 10
+ORDER BY 1 ASC, 2 ASC;
+
+#19. Qual a maior duração da locação dentre os filmes?
+SELECT MAX(duracao_da_locacao)
+FROM filme;
+
+#20. Quantos filmes possuem a maior duração de locação?
+SELECT COUNT(titulo)
+FROM filme
+WHERE duracao_da_locacao = (SELECT MAX(duracao_da_locacao)from filme);
+
+#21. Quantos filmes do idioma "JAPANESE" ou "GERMAN" possuem a maior duração de locação?
+SELECT COUNT(filme.titulo) as Quant_Filmes, idioma.nome AS Idioma
+FROM filme INNER JOIN idioma ON filme.idioma_id = idioma.idioma_id
+AND filme.duracao_da_locacao = (SELECT MAX(filme.duracao_da_locacao)from filme)
+AND (idioma.nome = "GERMAN" OR idioma.nome = "JAPANESE")
+GROUP BY idioma.nome;
+
+#22. Qual a quantidade de filmes por classificação e preço da locação?
+SELECT COUNT(titulo), preco_da_locacao, classificacao
+FROM filme
+GROUP BY classificacao, preco_da_locacao;
+
+#23. Qual o maior tempo de duração de filme por categoria?
+SELECT MAX(filme.duracao_do_filme), categoria.nome
+FROM filme INNER JOIN filme_categoria ON filme.filme_id = filme_categoria.filme_id
+INNER JOIN categoria ON filme_categoria.categoria_id = categoria.categoria_id
+GROUP BY categoria.categoria_id;
+
+#24. Listar a quantidade de filmes por categoria.
+SELECT COUNT(filme.titulo), categoria.nome
+FROM filme INNER JOIN filme_categoria ON filme.filme_id = filme_categoria.filme_id
+INNER JOIN categoria ON filme_categoria.categoria_id = categoria.categoria_id
+GROUP BY categoria.categoria_id;
+
+#25. Listar a quantidade de filmes classificados como "G" por categoria.
+SELECT categoria.nome, COUNT(filme.titulo), filme.classificacao
+FROM filme INNER JOIN filme_categoria ON filme.filme_id = filme_categoria.filme_id
+INNER JOIN categoria ON filme_categoria.categoria_id = categoria.categoria_id
+AND filme.classificacao = "G"
+GROUP BY categoria.nome;
+
+#26. Listar a quantidade de filmes classificados como "G" OU "PG" por categoria.
+SELECT COUNT(filme.titulo), categoria.nome FROM filme
+INNER JOIN filme_categoria ON filme.filme_id = filme_categoria.filme_id
+INNER JOIN categoria ON filme_categoria.categoria_id = categoria.categoria_id
+AND (filme.classificacao = "G" or filme.classificacao = "PG")
+GROUP BY categoria.nome;
+
+#27. Listar a quantidade de filmes por categoria e classificação.
+SELECT COUNT(filme.titulo), filme.classificacao, categoria.nome FROM filme
+INNER JOIN filme_categoria ON filme.filme_id = filme_categoria.filme_id
+INNER JOIN categoria ON filme_categoria.categoria_id = categoria.categoria_id
+GROUP BY categoria.nome, filme.classificacao;
+
+#28. Qual a quantidade de filmes por Ator ordenando decrescente por quantidade?
+SELECT COUNT(filme.titulo), ator.primeiro_nome, ator.ultimo_nome FROM filme
+INNER JOIN filme_ator ON filme_ator.filme_id = filme.filme_id
+INNER JOIN ator ON ator.ator_id =  filme_ator.ator_id
+GROUP BY ator.ator_id
+ORDER BY COUNT(filme.titulo) ASC; # ORDER BY 1 ASC
+
+#29. Qual a quantidade de filmes por ano de lançamento ordenando por quantidade crescente?
+SELECT COUNT(titulo), ano_de_lancamento
+FROM filme
+GROUP BY ano_de_lancamento
+ORDER BY 1 ASC;
+
+#30. Listar os anos de lançamento que possuem mais de 400 filmes?
+SELECT ano_de_lancamento, COUNT(titulo)
+FROM filme
+GROUP BY ano_de_lancamento
+HAVING COUNT(titulo) > 400;
+
+#31. Listar os anos de lançamento dos filmes que possuem mais de 100 filmes
+#dcom preço da locação maior que a média do preço da locação dos filmes da categoria "Children"?
+SELECT ano_de_lancamento AS ANO_DE_LANCAMENTO, COUNT(titulo) AS TITULO FROM filme
+INNER JOIN  filme_categoria ON filme.filme_id = filme_categoria.filme_id
+INNER JOIN categoria ON filme_categoria.categoria_id = categoria.categoria_id
+AND filme.preco_da_locacao > (SELECT avg(preco_da_locacao) FROM filme
+INNER JOIN filme_categoria ON filme.filme_id = filme_categoria.filme_id
+INNER JOIN categoria ON filme_categoria.categoria_id = categoria.categoria_id
+AND categoria.nome = "CHILDREN")
+GROUP BY ano_de_lancamento 
+HAVING COUNT(titulo) > 10; #coloquei 10 para testar melhor
+
+#31. Qual a quantidade de cidades por pais em ordem decrescente?
+SELECT count(cidade.cidade) as Cidades, pais.pais as Pais from cidade
+INNER JOIN pais ON pais.pais_id = cidade.pais_id
+GROUP BY cidade.pais_id
+ORDER BY pais.pais DESC;
+
+#32. Qual a quantidade de cidades que iniciam com a Letra “A” por pais em ordem crescente?
+SELECT count(cidade.cidade) as Cidades, pais.pais as Pais from cidade
+INNER JOIN pais ON pais.pais_id = cidade.pais_id
+WHERE cidade.cidade LIKE 'A%'
+GROUP BY cidade.pais_id
+ORDER BY pais.pais ASC;
+
+#33. Quais os países que possuem mais de 3 cidades que iniciam com a Letra “A”?
+SELECT count(*) as Cidades, pais.pais as Pais from cidade
+INNER JOIN pais ON pais.pais_id = cidade.pais_id
+WHERE cidade.cidade LIKE 'A%'
+GROUP BY cidade.pais_id
+HAVING count(cidade.cidade) >3;
+
+#34. Quais os países que possuem mais de 3 cidades
+#que iniciam com a Letra “A” ou tenha "R" ordenando por quantidade crescente?
+SELECT count(*) as Cidades, pais.pais as Pais FROM cidade
+INNER JOIN pais ON pais.pais_id = cidade.pais_id
+WHERE cidade.cidade LIKE 'A%' OR cidade.cidade LIKE '%R%'
+GROUP BY cidade.pais_id
+HAVING count(cidade.cidade) >3
+ORDER BY pais.pais ASC;
+
+#35. Quais os clientes moram no país “United States”?
+SELECT cliente.primeiro_nome, cliente.ultimo_nome, pais.pais FROM cliente
+INNER JOIN endereco ON cliente.endereco_id = endereco.endereco_id
+INNER JOIN cidade ON endereco.cidade_id = cidade.cidade_id
+INNER JOIN pais ON cidade.pais_id = pais.pais_id
+WHERE pais.pais = "United States";
+
+#36. Quantos clientes moram no país “Brazil”?
+SELECT COUNT(cliente.cliente_id) as Clientes, pais.pais as Pais FROM cliente
+INNER JOIN endereco ON cliente.endereco_id = endereco.endereco_id
+INNER JOIN cidade ON endereco.cidade_id = cidade.cidade_id
+INNER JOIN pais ON cidade.pais_id = pais.pais_id
+WHERE pais.pais = "BRAZIL";
+
+#37. Qual a quantidade de clientes por pais?
+SELECT COUNT(cliente.cliente_id) as Clientes, pais.pais as Pais FROM cliente
+INNER JOIN endereco ON cliente.endereco_id = endereco.endereco_id
+INNER JOIN cidade ON endereco.cidade_id = cidade.cidade_id
+INNER JOIN pais ON cidade.pais_id = pais.pais_id
+GROUP BY pais.pais_id;
+
+#38. Quais países possuem mais de 10 clientes?
+SELECT COUNT(cliente.cliente_id) as Clientes, pais.pais as Pais FROM cliente
+INNER JOIN endereco ON cliente.endereco_id = endereco.endereco_id
+INNER JOIN cidade ON endereco.cidade_id = cidade.cidade_id
+INNER JOIN pais ON cidade.pais_id = pais.pais_id
+GROUP BY pais.pais_id
+HAVING COUNT(cliente.cliente_id) > 10;
+
+#39. Qual a média de duração dos filmes por idioma?
+SELECT AVG(filme.duracao_do_filme) AS Filme_Duração_Média, idioma.nome AS Idioma FROM filme
+INNER JOIN idioma ON filme.idioma_id = idioma.idioma_id
+GROUP BY idioma.nome;
+
+#40. Qual a quantidade de atores que atuaram nos filmes do idioma “English”?
+SELECT COUNT(ator.ator_id) AS Atores, filme.titulo AS FILME FROM ator
+INNER JOIN filme_ator ON ator.ator_id = filme_ator.ator_id
+INNER JOIN filme ON filme_ator.filme_id = filme.filme_id
+INNER JOIN idioma ON filme.idioma_id = idioma.idioma_id
+AND idioma.nome = "ENGLISH"
+GROUP BY filme.titulo;
+
+#41. Quais os atores do filme “BLANKET BEVERLY”?
+SELECT ator.primeiro_nome, ator.ultimo_nome, filme.titulo FROM ator
+INNER JOIN filme_ator ON ator.ator_id = filme_ator.ator_id
+INNER JOIN filme ON filme_ator.filme_id = filme.filme_id
+AND filme.titulo = "BLANKET BEVERLY";
+
+#42. Quais categorias possuem mais de 60 filmes cadastrados?
+SELECT COUNT(filme.titulo) AS Nº_de_Filmes , categoria.nome AS Categoria FROM filme
+INNER JOIN filme_categoria ON filme.filme_id = filme_categoria.filme_id
+INNER JOIN categoria ON filme_categoria.categoria_id = categoria.categoria_id
+GROUP BY categoria.nome
+HAVING COUNT(filme.titulo) > 60;
+
+#43. Quais os filmes alugados (sem repetição) para clientes que moram na “Argentina”?
+SELECT DISTINCT filme.titulo, cliente.primeiro_nome AS Nome, cliente.ultimo_nome AS Sobrenome, pais.pais FROM filme
+INNER JOIN inventario ON filme.filme_id = inventario.filme_id
+INNER JOIN aluguel ON inventario.inventario_id = aluguel.inventario_id
+INNER JOIN cliente ON aluguel.cliente_id = cliente.cliente_id
+INNER JOIN endereco ON cliente.endereco_id = endereco.endereco_id
+INNER JOIN cidade ON endereco.cidade_id = cidade.cidade_id
+INNER JOIN pais ON cidade.pais_id = pais.pais_id
+AND pais.pais = "ARGENTINA"
+ORDER BY cliente.primeiro_nome, cliente.ultimo_nome ASC;
+
+#44. Qual a quantidade de filmes alugados por Clientes que moram na “Chile”?
+SELECT COUNT(filme.titulo) AS Nº_Filmes, pais.pais FROM filme
+INNER JOIN inventario ON filme.filme_id = inventario.filme_id
+INNER JOIN aluguel ON inventario.inventario_id = aluguel.inventario_id
+INNER JOIN cliente ON aluguel.cliente_id = cliente.cliente_id
+INNER JOIN endereco ON cliente.endereco_id = endereco.endereco_id
+INNER JOIN cidade ON endereco.cidade_id = cidade.cidade_id
+INNER JOIN pais ON cidade.pais_id = pais.pais_id
+AND pais.pais = "CHILE";
+
+#45. Qual a quantidade de filmes alugados por funcionario?
+SELECT COUNT(filme.titulo) as Nº_Locações, funcionario.primeiro_nome, funcionario.ultimo_nome from filme
+INNER JOIN inventario ON filme.filme_id =  inventario.filme_id
+INNER JOIN aluguel ON inventario.inventario_id = aluguel.inventario_id
+INNER JOIN funcionario ON aluguel.funcionario_id = funcionario.funcionario_id
+group BY funcionario.funcionario_id
+ORDER BY funcionario.primeiro_nome ASC;
+
+#46. Qual a quantidade de filmes alugados por funcionario para cada categoria?
+SELECT COUNT(filme.titulo) as Nº_Locações, categoria.nome from filme
+INNER JOIN inventario ON filme.filme_id =  inventario.filme_id
+INNER JOIN aluguel ON inventario.inventario_id = aluguel.inventario_id
+INNER JOIN funcionario ON aluguel.funcionario_id = funcionario.funcionario_id
+INNER JOIN filme_categoria ON filme.filme_id = filme_categoria.filme_id
+INNER JOIN categoria ON categoria.categoria_id = filme_categoria.categoria_id
+group BY categoria.nome;
+
+#47. Quais Filmes possuem preço da Locação maior que a média de preço da locação?
+SELECT titulo, preco_da_locacao FROM filme
+WHERE preco_da_locacao > (SELECT AVG(preco_da_locacao) FROM filme);
+
+#48. Qual a soma da duração dos Filmes por categoria?
+SELECT SUM(filme.duracao_do_filme) AS Duracão_Filme, categoria.nome from filme
+INNER JOIN filme_categoria ON filme.filme_id = filme_categoria.filme_id
+INNER JOIN categoria ON filme_categoria.categoria_id = categoria.categoria_id
+GROUP BY categoria.categoria_id;
+
+#49. Qual a quantidade de filmes locados mês a mês por ano?
+SELECT COUNT(filme.titulo) AS Q_Filmes, month(data_de_aluguel) AS MÊS, year(data_de_aluguel) AS ANO  FROM filme
+INNER JOIN inventario ON filme.filme_id = inventario.filme_id
+INNER JOIN aluguel ON inventario.inventario_id = aluguel.inventario_id
+GROUP BY month(data_de_aluguel), year(data_de_aluguel)
+ORDER BY year(data_de_aluguel), month(data_de_aluguel) ASC;
+
+#50. Qual o total pago por classificação de filmes alugados no ano de 2006?
+SELECT filme.classificacao AS Classificacao, SUM(pagamento.valor) AS Total_Pgto, year(pagamento.data_de_pagamento) AS Ano FROM filme
+INNER JOIN inventario ON filme.filme_id = inventario.filme_id
+INNER JOIN aluguel ON inventario.inventario_id = aluguel.inventario_id
+INNER JOIN pagamento ON aluguel.aluguel_id = pagamento.aluguel_id 
+WHERE year(pagamento.data_de_pagamento) = "2006"
+GROUP BY filme.classificacao
+ORDER BY filme.classificacao ASC;
+
+#51. Qual a média mensal do valor pago por filmes alugados no ano de 2005?
+SELECT SUM(pagamento.valor) AS Média_Pgto, month(pagamento.data_de_pagamento) AS Mês, year(pagamento.data_de_pagamento) AS Ano FROM filme
+INNER JOIN inventario ON filme.filme_id = inventario.filme_id
+INNER JOIN aluguel ON inventario.inventario_id = aluguel.inventario_id
+INNER JOIN pagamento ON aluguel.aluguel_id = pagamento.aluguel_id 
+WHERE year(pagamento.data_de_pagamento) = "2005"
+GROUP BY month(pagamento.data_de_pagamento);
+
+#52. Qual o total pago por filme alugado no mês de Junho de 2006 por cliente?
+SELECT SUM(pagamento.valor) AS Total_Pago, filme.titulo AS Título,
+month(data_de_pagamento) as Mês_PGTO , year(data_de_pagamento) as Ano_PGTO FROM filme
+INNER JOIN inventario ON filme.filme_id = inventario.filme_id
+INNER JOIN aluguel ON inventario.inventario_id = aluguel.inventario_id
+INNER JOIN pagamento ON aluguel.aluguel_id = pagamento.aluguel_id 
+WHERE year(pagamento.data_de_pagamento) = "2006" and month(data_de_pagamento) = "2"
+GROUP BY filme.titulo;
+
+
