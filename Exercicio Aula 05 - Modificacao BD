@@ -1,0 +1,27 @@
+USE douglas_exercbd2;
+-- c)	Exclua a coluna ‘sinopse_livro’ da tabela ‘tab_livro’; 
+ALTER TABLE tab_livro DROP COLUMN sinopse_livro;
+
+-- d)	Altere o tipo de dado da coluna ‘uf_usuario’ da tabela ‘tab_usuario’ para varchar(2);
+ALTER TABLE tab_usuario MODIFY COLUMN uf_usuario VARCHAR(2) NOT NULL;
+
+-- e)	Mude a nacionalidade do autor ‘José Augusto N.G. Manzano’ para Italiano(a); 
+UPDATE tab_autor SET nacion_autor = 'Italiano(a)' WHERE nome_autor = 'José Augusto N.G. Manzano';
+
+-- f)	Mude o ano de publicação do livro ‘Programação Java’ de ‘2012’ para ‘2011’; 
+UPDATE tab_livro SET anopub_livro = 2011 WHERE nome_livro = 'Programação Java' AND anopub_livro = 2012;
+
+-- g)	Altere a cidade do usuário ‘Carlos Siqueira’ de ‘Curitiba’ para ‘Salvador’ e o estado do mesmo usuário de ‘PR’ para ‘BA’; 
+UPDATE tab_usuario SET cidade_usuario = 'Salvador', uf_usuario = 'BA'
+WHERE nome_usuario = 'Carlos Siqueira' AND cidade_usuario = 'Curitiba' AND uf_usuario = 'PR';
+
+-- h)	Exclua o livro ‘Guia de Bolso Windows Server 2008’ da tabela ‘tab_livro’; 
+
+START TRANSACTION;
+CREATE TEMPORARY TABLE temp_livro_ids AS
+SELECT id_livro FROM tab_livro WHERE nome_livro = 'Guia de Bolso Windows Server 2008';
+DELETE FROM tab_autorias
+WHERE livro IN (SELECT id_livro FROM temp_livro_ids);
+DELETE FROM tab_livro
+WHERE id_livro IN (SELECT id_livro FROM temp_livro_ids);
+COMMIT;
