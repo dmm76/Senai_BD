@@ -1,0 +1,81 @@
+CREATE DATABASE if not exists atividade07;
+USE atividade07;
+
+CREATE TABLE if not exists Pessoas(
+	Id_Pessoas INT AUTO_INCREMENT, 
+	Nome VARCHAR(30) NOT NULL,
+    SOBRENOME VARCHAR(30) NOT NULL,
+    Cpf VARCHAR(15) NOT NULL,
+    Pessoas_status BOOLEAN NOT NULL,
+	PRIMARY KEY(Id_Pessoas)
+);
+
+#Comando para adicionar o atributo SOBRENOME na tabela Pedidos
+#ALTER TABLE PESSOAS
+#ADD SOBRENOME VARCHAR(30);
+
+CREATE TABLE if not exists Clientes(
+	Id_Cliente INT AUTO_INCREMENT,
+	Pessoa_id INT NOT NULL,
+    Renda DOUBLE NOT NULL,
+    Credito DOUBLE NOT NULL,
+    PRIMARY KEY(Id_Cliente),
+    FOREIGN KEY(Pessoa_id) REFERENCES Pessoas(Id_Pessoas)
+);
+
+#Comando para adicionar o atributo CLIENTE_ID na tabela Pedidos
+#ALTER TABLE Clientes nao consegui fazer com auto_increment
+#DELETE Cliente_Id;
+
+    
+CREATE TABLE if not exists Vendedores(
+	Id_Vendedor INT AUTO_INCREMENT,
+    Pessoa_id INT,
+    Salario DOUBLE NOT NULL,
+    PRIMARY KEY(Id_Vendedor),
+    FOREIGN KEY(Pessoa_id) REFERENCES Pessoas(Id_Pessoas)
+);
+
+CREATE TABLE if not exists Status_Pedidos(
+	id_StatusPedido INT AUTO_INCREMENT PRIMARY KEY,
+    nome ENUM('confirmado', 'em_espera', 'cancelado')
+);
+
+#USADO UMA UNICA VEZ PARA INSERIR VALORES NA TABELA STATUS_PEDIDOS
+#INSERT INTO Status_Pedidos (nome) VALUES ('confirmado'), ('em_espera'), ('cancelado');
+
+CREATE TABLE if not exists Pedidos(
+	Id_Pedido INT AUTO_INCREMENT,
+    datapedido DATE,
+	Valor DOUBLE NOT NULL,
+    Status_id INT,
+    Vendedor_Id INT,
+    Cliente_Id INT,
+    Status_Pedido BOOLEAN NOT NULL,
+    PRIMARY KEY(Id_Pedido),
+    FOREIGN KEY (Status_id) REFERENCES Status_Pedidos(id_StatusPedido),
+    FOREIGN KEY(Vendedor_Id) REFERENCES Vendedores(Id_Vendedor),
+    FOREIGN KEY(Cliente_Id) REFERENCES Clientes(Id_Cliente)
+);
+	#Comando para adicionar o atributo data na tabela Pedidos
+    #ALTER TABLE Pedidos
+    #ADD data DATE;
+
+CREATE TABLE if not exists Produtos(
+	Produto_id INT AUTO_INCREMENT,
+	Descricao VARCHAR(50),
+    Estoque INT NOT NULL,
+    Valor DOUBLE NOT NULL,
+    Status_Produto BOOLEAN,
+    PRIMARY KEY(Produto_Id)
+);
+
+CREATE TABLE if not exists Itens_pedidos(
+	Pedido_id INT NOT NULL,
+	Produto_id INT NOT NULL,
+    Quantidade DOUBLE NOT NULL,
+    Valor DOUBLE NOT NULL,
+    Desconto DOUBLE NOT NULL
+);
+
+
