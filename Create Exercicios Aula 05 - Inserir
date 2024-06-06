@@ -1,0 +1,40 @@
+USE douglas_exercbd2;
+
+INSERT INTO tab_usuario (nome_usuario, cpf_usuario,
+ nasc_usuario, fone_usuario, email_usuario, cidade_usuario, uf_usuario)
+VALUE ('André da Silva', '11223344556', '1998-03-21', '4135341234', 'andredasilva@mail.com', 'Curitiba', 'PR');
+INSERT INTO tab_usuario (nome_usuario, cpf_usuario,
+ nasc_usuario, fone_usuario, email_usuario, cidade_usuario, uf_usuario)
+VALUE ('Carlos Siqueira', '23412356790', '1980-12-13', '4136365678', 'siqueira.carlossiqueira@mail.com', 'Curitiba', 'PR');
+
+INSERT INTO tab_autor (nome_autor, nacion_autor)
+VALUE('Josenildo Feijó', 'Brasileiro(a)');
+INSERT INTO tab_autor (nome_autor, nacion_autor)
+VALUE('José Augusto N.G. Manzano', 'Brasileiro(a)');
+INSERT INTO tab_autor (nome_autor, nacion_autor)
+VALUE('Peter Rob', 'Norte Americano(a)');
+
+INSERT INTO tab_editora(nome_editora, cidade_editora, uf_editora)
+VALUE('Editora Érica', 'São Paulo', 'SP');
+INSERT INTO tab_editora(nome_editora, cidade_editora, uf_editora)
+VALUE('Microsoft Press', 'São Paulo', 'SP');
+
+
+INSERT INTO tab_livro(editora_livro, nome_livro, nomeoriginal_livro, genero_livro, sinopse_livro, paginas_livro, anopub_livro)
+VALUE(2, 'Guia de Bolso Windows Server 2008', 'The Windows Server 2008 Guide', 'Informática', 'Guia completo', 650, 2008);
+INSERT INTO tab_livro(editora_livro, nome_livro, nomeoriginal_livro, genero_livro, sinopse_livro, paginas_livro, anopub_livro)
+VALUE(2, 'Redes de Computadores', '', 'TI', 'INICIANTE', 320, 2012);
+INSERT INTO tab_livro(editora_livro, nome_livro, nomeoriginal_livro, genero_livro, sinopse_livro, paginas_livro, anopub_livro)
+VALUE(1, 'Programação Java', 'Java Programming', 'Informática', 'Full Java Development', 567, 2012);
+INSERT INTO tab_livro(editora_livro, nome_livro, nomeoriginal_livro, genero_livro, sinopse_livro, paginas_livro, anopub_livro)
+VALUE(1, 'Programação Delphi XE3', '', 'TI', '', 513, 2012);
+
+INSERT INTO tab_autorias(livro, autor)
+VALUE(1,1);
+INSERT INTO tab_autorias(livro, autor)
+VALUE(1,2);
+INSERT INTO tab_autorias(livro, autor)
+VALUE(3,3);
+INSERT INTO tab_autorias(livro, autor)
+VALUE(4,2);
+
